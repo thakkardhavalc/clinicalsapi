@@ -1,7 +1,10 @@
 package com.github.clinicalsapi.controller;
 
+import com.github.clinicalsapi.dto.ClinicalDataRequest;
 import com.github.clinicalsapi.models.ClinicalData;
+import com.github.clinicalsapi.models.Patient;
 import com.github.clinicalsapi.repository.ClinicalDataRepository;
+import com.github.clinicalsapi.repository.PatientRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,8 +25,11 @@ public class ClinicalDataController {
 
     private final ClinicalDataRepository clinicalDataRepository;
 
-    public ClinicalDataController(ClinicalDataRepository clinicalDataRepository) {
+    private final PatientRepository patientRepository;
+
+    public ClinicalDataController(ClinicalDataRepository clinicalDataRepository, PatientRepository patientRepository) {
         this.clinicalDataRepository = clinicalDataRepository;
+        this.patientRepository = patientRepository;
     }
 
     @PostMapping
@@ -68,5 +74,20 @@ public class ClinicalDataController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    //method that receives patient id, clinical data and saves it to the database
+    @PostMapping("/clinicals")
+    public ResponseEntity<ClinicalData> saveClinicalData(@RequestBody ClinicalDataRequest clinicalDataRequest) {
+        ClinicalData clinicalData = new ClinicalData();
+        clinicalData.setComponentName(clinicalDataRequest.getComponentName());
+        clinicalData.setComponentValue(clinicalDataRequest.getComponentValue());
+
+        Patient patient = patientRepository.findById(clinicalDataRequest.getPatientId()).get();
+
+        clinicalData.setPatient(patient);
+
+        ClinicalData savedClinicalData = clinicalDataRepository.save(clinicalData);
+        return new ResponseEntity<>(savedClinicalData, HttpStatus.CREATED);
     }
 }

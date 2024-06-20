@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 import java.util.List;
 
@@ -14,10 +15,11 @@ import java.util.List;
  * Created By dhhaval thakkar on 2024-06-19
  */
 @Entity
+@Table(name = "patient")
 public class Patient {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String firstName;
@@ -28,6 +30,15 @@ public class Patient {
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ClinicalData> clinicalData;
+
+    public Patient() {
+    }
+
+    public Patient(String firstName, String lastName, int age) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+    }
 
     // Getters and Setters
     public Long getId() {
@@ -60,5 +71,13 @@ public class Patient {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public List<ClinicalData> getClinicalData() {
+        return clinicalData;
+    }
+
+    public void setClinicalData(List<ClinicalData> clinicalData) {
+        this.clinicalData = clinicalData;
     }
 }

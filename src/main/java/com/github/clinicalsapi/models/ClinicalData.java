@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 
@@ -20,13 +21,14 @@ import java.sql.Timestamp;
 public class ClinicalData {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String componentName;
 
     private String componentValue;
 
+    @CreationTimestamp
     private Timestamp measuredDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -65,5 +67,13 @@ public class ClinicalData {
 
     public void setMeasuredDateTime(Timestamp measuredDateTime) {
         this.measuredDateTime = measuredDateTime;
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
     }
 }
